@@ -5,6 +5,7 @@ layoutName: "mediumClassic"
 maxTime: "600"
 numGames: "10"
 
+
 nonTimeoutMinimum: "10"
 
 scoreThresholds: "400 700"
@@ -12,5 +13,6 @@ scoreThresholds: "400 700"
 winsMinimum: "1"
 winsThresholds: "2 5"
 
+
 randomSeed: "1"
-ghosts: "[RandomGhost(1), DirectionalGhost(2)]"
+ghosts: "[RandomGhost(1)]"

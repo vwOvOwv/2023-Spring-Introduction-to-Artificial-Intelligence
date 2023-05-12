@@ -15,4 +15,4 @@ if __name__ == "__main__":
     with open(save_path, "wb") as f:
         pickle.dump(roots, f)
     pred = np.array([infertrees(roots, val_X[i]) for i in range(val_X.shape[0])])
-    print("valid acc", np.average(pred==val_Y)) # acc 0.7941
+    print("valid acc", np.average(pred==val_Y))

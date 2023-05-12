@@ -1,19 +1,19 @@
 import argparse
 import subprocess
-from util import TimeoutFunction
 import numpy as np
+import time
 
-PYTHON_PATH = "python"
+PYTHON_PATH = "python3"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--q", choices=["q1", "q2", "q3", "q4", "all"], default="all")
 parser.add_argument("--q4training", action="store_true")
 args = parser.parse_args()
 
+
 def programcall(cmd: str, timeout: float=600):
     print(cmd)
-    func = TimeoutFunction(subprocess.check_output, timeout)
-    ret = func(cmd, shell=True)
+    ret = subprocess.check_output(cmd, shell=True, timeout=timeout)
     ret = str(ret, encoding="utf-8")
     return ret.splitlines()
 
@@ -21,6 +21,14 @@ def checkGraphDebuggerOut(outputlines):
     for line  in outputlines[1:]:
         grad1, grad2 = map(float, line.split())
         if np.abs(grad1-grad2) > 1e-2:
+            return False
+    return True
+
+def matchGraphDebuggerOut(outputlines, answerlines):
+    for i in range(len(outputlines)-1):
+        _, grad2 = map(float, outputlines[i+1].split())
+        _, answergrad = map(float, answerlines[i+1].split())
+        if np.abs(answergrad-grad2) > 1e-2:
             return False
     return True
 
@@ -68,21 +76,35 @@ def q2():
 def q3debug():
     score = 100
     for filename in ["CELoss", "NLLLoss", "Linear", "multilayer", "BatchNorm", "Dropout"]:
-        output = programcall(f"{PYTHON_PATH} debug_NeuralNetwork.py input/nn.{filename}.in")
+        output = programcall(f"{PYTHON_PATH} debug_NeuralNetwork.py input/nn.{filename}.in --load")
         print(f"problem input/nn.{filename}.in")
         if checkGraphDebuggerOut(output):
-            print("Success")
-        else:
-            print("Failed")
-            score -= 10
+            print("numerical grad = backward grad")
+            with open(f"input/nn.{filename}.out", "r") as f:
+                answerlines = f.readlines()
+            if matchGraphDebuggerOut(output, answerlines):
+                print("match answer")
+                print("Success")
+                continue
+            else:
+                print("cannot match answer")
+        print("Failed")
+        score -= 10
     for filename in ["relu", "sigmoid", "tanh", "mix"]:
         output = programcall(f"{PYTHON_PATH} debug_ScalarFunction.py input/sf.{filename}.in")
         print(f"problem input/sf.{filename}.in")
         if checkGraphDebuggerOut(output):
-            print("Success")
-        else:
-            print("Failed")
-            score -= 10
+            print("numerical grad = backward grad")
+            with open(f"input/sf.{filename}.out", "r") as f:
+                answerlines = f.readlines()
+            if matchGraphDebuggerOut(output, answerlines):
+                print("match answer")
+                print("Success")
+                continue
+            else:
+                print("cannot match answer")
+        print("Failed")
+        score -= 10
     return score
 
 
@@ -101,7 +123,7 @@ def q4():
     fullscorelist = [570, 1110, 760]
     mapnamelist = ["largeAccuracy", "onepath", "VeryLargePKU"]
     maxsteplist = [200, 120, 150]
-    stardartscore = [100, 100, 100]
+    stardartscore = [50, 10, -50]
     zeroscore = [-100, -100, -200]
     for i in range(len(mapnamelist)):
         for seed in range(5):
@@ -111,10 +133,14 @@ def q4():
             ret.append(scorer(score, stardartscore[i], zeroscore[i], fullscorelist[i]))
     return np.average(ret)
 
-if args.q == "all":
-    for q in [q1, q2, q3, q4]:
-        print(f"score {q():.0f}")
-else:
-    if args.q == "q4" and args.q4training:
-        q4training()
-    print(f"score {eval(args.q)():.0f}")
+if __name__ == "__main__":
+    if args.q == "all":
+        for q in [q1, q2, q3]:
+            print(f"score {q():.0f}")
+        if args.q4training:
+            q4training()
+        print(f"score {q4():.0f}")
+    else:
+        if args.q == "q4" and args.q4training:
+            q4training()
+        print(f"score {eval(args.q)():.0f}")

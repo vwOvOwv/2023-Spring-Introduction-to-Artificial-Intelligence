@@ -7,6 +7,9 @@ v1.0:
 
 与问题无关的修正 1. layout.py 146行的random.choice换成np.random.choice 2.增加了pdf版本的README
 
+v2.0:
+与问题无关的修正 1. q3过去的debug_*只检查数值梯度=反向传播梯度。现在还会检查绝对数值。2. README增加提示
+
 ### 目录
 
 *   [介绍](#介绍)
@@ -111,7 +114,7 @@ np.sum:
 np.average:
 np.std: 
 
-
+log(0)，/0, exp(很大的数字),  都会导致inf和nan产生。前两者可以通过log(x+EPS), /(x+EPS)避免，EPS是个很小的数比如1e-6。exp一般与log 连用， 对$\ln(exp(x1)+exp(x2))$，当$x1>x2$时可以化为 $x1+\ln(1+exp(x2-x1))$。类似地 $ln(1+e^x)$x很大时可以改为计算$x+ln(1+e^{-x})$。
 
 ### 数据说明
 
@@ -144,7 +147,7 @@ q1,q2,q3的数据划分是固定的。在q4中，你可以自由对MNIST数据(t
 %%%%%%%%%%%
 # -10 -10 -10 -10 -10 10 10 10 10 10 False
 ```
-其中P代表pacman的起始位置，%代表墙壁。数字代表食物的数字。根据数字，游戏会随机从数据集中抽取数字对应的图片。最后一行从前到后代表着0-9数字对应的分数。最后一个True/False代表着是否轮换数字。例如轮换后，地图左上角的数字8 （10分）可能会变为2（-10分）。换言之，你不能让你的模型只对特定的类识别特别准。
+其中P代表pacman的起始位置，%代表墙壁。数字代表食物的数字。根据数字，游戏会随机从数据集中抽取数字对应的图片。最后一行从前到后代表着0-9数字对应的分数。最后一个True/False代表着是否轮换数字。例如轮换后，地图左上角的数字8可能会变为2，2的分值会变为10，8的分值会变为-10。换言之，你不能让你的模型只对特定的类识别特别准。
 
 所有用于评分的地图已经公布。测试地图中都没有鬼。如果你想实现有鬼的情况，可参见选做的q5，不计分，不提交。
 
@@ -177,7 +180,7 @@ python pacman.py -p ReflexAgent -a model="LR" -l strict --maxstep 40
 ```
 python autograder.py --q q1
 ```
-来评分(0-100)。注意如果你使用默认的超参数可能分数会很差。
+来评分(0-100)。注意如果你使用默认的超参数可能分数会很差。本题的满分线是valid acc = 0.98.
 
 注意autograder可能会报错`python: command not found`，此时请修改autograder.py开头的PYTHON_PATH为你的python程序的绝对位置（Linux和苹果用户可以在shell中用`which python`, windows用户可以在powershell中用`gcm python`)
 
@@ -219,7 +222,7 @@ python pacman.py -p ReflexAgent -a model="Forest" -l accuracy --maxstep 40
 ```
 python autograder.py --q q2
 ```
-来评分。
+来评分。本题的满分线是树valid acc 0.545，森林valid acc 0.71
 
 ### <a name="Q3"></a> Question 3 (6 points): 反向传播
 
@@ -259,7 +262,7 @@ python pacman.py -p ReflexAgent -a model="MLP" -l accuracy --maxstep 40
 ```
 python autograder.py --q q3
 ```
-来评分。本题的评分只看是否你实现的计算结点能通过有限元数值梯度的debug测试，以及你实现的MLP在验证集上的准确率。
+来评分。本题的评分只看是否你实现的计算结点能通过有限元数值梯度的debug测试，以及你实现的MLP在验证集上的准确率。本题的满分线是通过所有debug且mlp的valid acc达到0.87
 
 ### <a name="Q4"></a> Question 4 (5 points): 给pacman添加视觉
 
@@ -279,7 +282,7 @@ python pacman.py -p ReflexAgent -a model="Your" -l smallPKU
 ```
 python autograder.py --q q4 --q4training
 ```
-来评分。`--q4training`表示会调用YourTraining.py进行训练。如果已经训练完成，可以去掉这一选项。评分会分别在"largeAccuracy", "onepath", "VeryLargePKU"三个地图上收集多次pacman的得分来计算最终得分。
+来评分。`--q4training`表示会调用YourTraining.py进行训练。如果已经训练完成，可以去掉这一选项。评分会分别在"largeAccuracy", "onepath", "VeryLargePKU"三个地图上收集多次pacman的得分来计算最终得分。本题满分很难，但是达到90分很容易，不需要实现卷积算子。
 
 ### <a name="Q5"></a> Question 5 (0 points): 使用你自己的Agent
 

@@ -25,7 +25,7 @@ for x in np.linspace(-3, 3, num=10):
     graph.flush()
     value = graph.forward(x, debug)
     grad2 = graph.backward(debug=debug)
-    delta = 1e-7
+    delta = 1e-6
     graph.flush()
     value1 = graph.forward(x+delta)[-1]
     graph.flush()

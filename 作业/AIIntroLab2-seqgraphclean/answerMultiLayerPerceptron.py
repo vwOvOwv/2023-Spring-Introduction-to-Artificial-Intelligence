@@ -19,4 +19,25 @@ def buildGraph(Y):
     @return: Graph类的实例, 建好的图
     """
     # TODO: YOUR CODE HERE
+    nodes=[]
+    nodes.append(Linear(784,700))
+    nodes.append(Dropout())
+    nodes.append(Linear(700,600))
+    nodes.append(relu())
+    nodes.append(Linear(600,500))
+    nodes.append(Dropout())
+    nodes.append(Linear(500,400))
+    nodes.append(relu())
+    nodes.append(Linear(400,300))
+    nodes.append(Dropout())
+    nodes.append(Linear(300,200))
+    nodes.append(Dropout())
+    nodes.append(Linear(200,100))
+    nodes.append(Dropout())
+    nodes.append(Linear(100,10))
+    nodes.append(Dropout())
+    nodes.append(Linear(10,10))
+    nodes.append(Softmax())
+    nodes.append(CrossEntropyLoss(Y))
+    return Graph(nodes)
     return None

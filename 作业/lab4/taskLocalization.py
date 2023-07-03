@@ -89,7 +89,7 @@ class MontoCarloLocalization:
             return e.value
         
 def load_scene_and_run_gen(scene):
-    data_num = 1 # 自己改来测试
+    data_num = 0 # 自己改来测试
     odometry = np.load(f'data_q1/odom_{data_num}.npy')
     lidar = np.load(f'data_q1/lidar_{data_num}.npy')
     localizer = MontoCarloLocalization(scene, 500, odometry, lidar)        

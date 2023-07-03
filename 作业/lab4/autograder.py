@@ -3,7 +3,7 @@ import subprocess
 import numpy as np
 import time
 
-PYTHON_PATH = "python"
+PYTHON_PATH = "python3"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--q", choices=["q1", "q2", "q3", "all"], default="all")

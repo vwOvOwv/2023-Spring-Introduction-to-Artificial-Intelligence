@@ -15,6 +15,6 @@ def calc_pd_force(target_pos, current_pos, current_vel, kp, kd):
     """
     force = np.zeros(2,)
     ### 你的代码 ###
-
+    force=kp*(target_pos-current_pos)-kd*current_vel
     ### 你的代码 ###
     return force

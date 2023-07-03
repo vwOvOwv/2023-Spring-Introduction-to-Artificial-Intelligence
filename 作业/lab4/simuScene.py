@@ -130,8 +130,9 @@ class PlanningMap:
     
     def checkoccupy(self, point):
         """
-        检查pacman的质心坐标是否能处于给定point位置上
+        检查pacman的质心坐标是否能处于给定point位置上，这里提供一种最简单的用法
         如果pacman圆球与周围障碍物有穿模返回True，否则返回False
+        另外可以有更优雅的写法，可以自己在answer文件里实现，具体参考https://www.zhihu.com/question/24251545/answer/27184960
         """
         point_floor = np.floor(point)
         point_remain = point - point_floor
@@ -142,7 +143,7 @@ class PlanningMap:
             occupied.append([point_floor[0], point_floor[1] + 1])
         if point_remain[0] > 0.25 and point_remain[1] < 0.75:
             occupied.append([point_floor[0] + 1, point_floor[1]])
-        if point_remain[0] < 0.25 and point_remain[1] > 0.25:
+        if point_remain[0] > 0.25 and point_remain[1] > 0.25:
             occupied.append([point_floor[0] + 1, point_floor[1] + 1])
         for block in occupied:
             if block in self.walls:
